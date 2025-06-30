@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chúc mừng sinh nhật bé yêu</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      background: #001;
+      color: white;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 40vh;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .heart-container {
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 150px;
+      height: 150px;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .big-heart {
+      width: 100px;
+      height: 100px;
+      background: pink;
+      position: relative;
+      transform: rotate(-45deg);
+      margin: auto;
+    }
+
+    .big-heart::before,
+    .big-heart::after {
+      content: '';
+      width: 100px;
+      height: 100px;
+      background: pink;
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .big-heart::before {
+      top: -50px;
+      left: 0;
+    }
+
+    .big-heart::after {
+      top: 0;
+      left: 50px;
+    }
+
+    .big-heart span {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      font-size: 16px;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .small-heart {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: red;
+      transform: rotate(-45deg);
+      border-radius: 50% 50% 0 0;
+      opacity: 0.8;
+      animation: fly 4s ease-in-out forwards;
+      left: 50%;
+      top: 50%;
+    }
+
+    .small-heart::before,
+    .small-heart::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: red;
+      border-radius: 50%;
+    }
+
+    .small-heart::before {
+      top: -8px;
+      left: 0;
+    }
+
+    .small-heart::after {
+      left: -8px;
+      top: 0;
+    }
+
+    @keyframes fly {
+      0% {
+        transform: translate(var(--x), var(--y)) scale(0.5) rotate(-45deg);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translate(0, 0) scale(1.2) rotate(-45deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Nhạc nền -->
+  <!-- <audio src="phepmau.mp3" autoplay loop></audio> -->
+<!-- Nhạc nền -->
+<audio id="bgMusic" src="phepmau.mp3" autoplay loop></audio>
+
+
+  <!-- Hiệu ứng trái tim -->
+  <div class="heart-container">
+    <div class="big-heart">
+      
+    </div>
+  </div>
+
+  <!-- Lời chúc -->
+  <div class="container">
+    <h1>🎂 Chúc mừng sinh nhật bé yêu 🎂</h1>
+    <p>Hôm nay là một ngày thật đặc biệt – ngày mà phép màu xuất hiện trên đời, vì bé đã ra đời và làm cuộc sống của anh trở nên rực rỡ hơn bao giờ hết🥰.</p>
+    <p>Anh biết không có món quà nào đủ lớn để thể hiện hết tình cảm mà anh dành cho bé, nhưng anh hy vọng trang web nhỏ xinh này sẽ khiến bé mỉm cười 💕.</p>
+    <p>Mỗi phút giây bên bé đều là một điều kỳ diệu. Anh mong rằng tuổi mới sẽ mang đến cho bé thật nhiều niềm vui, những giấc mơ tuyệt vời và mọi điều tốt đẹp nhất.</p>
+    <p>Hãy luôn hạnh phúc 🌹🌹🌹, luôn là chính bé – cô gái dễ thương, dịu dàng và luôn khiến anh rung động.</p>
+    <p>Anh không cầu gì nhiều, chỉ mong tuổi mới của em sẽ trọn vẹn như tình yêu của chúng ta – đủ dịu dàng, đủ ấm áp và đủ lâu dài. Dù thời gian có trôi, tình cảm anh dành cho em vẫn luôn vẹn nguyên👩‍❤️‍👨.
+    Chúc mừng sinh nhật🎂🎉, người thương của anh 😝❤️</p>
+    <p>Yêu bé nhiều hơn từng dòng code anh viết 💻❤️</p>
+    <p>Ký tên: Người luôn nghĩ về bé mỗi ngày💗</p>
+  </div>
+
+  <!-- Hiệu ứng pháo hoa -->
+  <canvas id="canvas"></canvas>
+
+  <script>
+    document.addEventListener('click', function () {
+    const audio = document.getElementById('bgMusic');
+    audio.volume = 0.3; // Tùy chọn: giảm âm lượng
+    audio.play();
+  }, { once: true }); // chỉ chạy một lần khi click
+
+    // Trái tim nhỏ bay vào trung tâm
+    function spawnHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'small-heart';
+      const radius = 200;
+      const angle = Math.random() * Math.PI * 2;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      heart.style.setProperty('--x', `${x}px`);
+      heart.style.setProperty('--y', `${y}px`);
+      document.querySelector('.heart-container').appendChild(heart);
+      setTimeout(() => heart.remove(), 4000);
+    }
+    setInterval(spawnHeart, 200);
+
+    // Pháo hoa bằng canvas
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    let particles = [];
+
+    class Particle {
+      constructor() {
+        this.x = rand(0, canvas.width);
+        this.y = canvas.height + 10;
+        this.size = rand(2, 5);
+        this.color = `hsl(${rand(0, 360)}, 100%, 70%)`;
+        this.speedY = rand(-1, -3);
+        this.speedX = rand(-1, 1);
+        this.alpha = 1;
+      }
+ 
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.alpha -= 0.01;
+      }
+
+      draw() {
+        ctx.globalAlpha = this.alpha;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (Math.random() < 0.3) {
+        particles.push(new Particle());
+      }
+      particles = particles.filter(p => p.alpha > 0);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
